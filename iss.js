@@ -17,5 +17,19 @@ const fetchMyIP = function(callback) {
   });
 }
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = function(ip, callback) {
+  const ipv4 = `https://freegeoip.app/json/${ip}`;
+  request(ipv4, function(error, response, body) {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      callback(Error(`Status Code ${response.statusCode} when fetching coordinates for IP. Response: ${body}`));
+    }
+    const { latitude, longitude } = JSON.parse(body);
+    callback(null, { latitude, longitude });
+  })
+};
 
+module.exports = { fetchMyIP, fetchCoordsByIP };
